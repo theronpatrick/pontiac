@@ -1,0 +1,30 @@
+dependencies: \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/node_modules/react-native/Libraries/Image/RCTImageViewManager.m \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/node_modules/react-native/Libraries/Image/RCTImageViewManager.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTViewManager.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridgeModule.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTDefines.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTConvert.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTAnimationType.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBorderStyle.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTLog.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTAssert.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTUtils.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTPointerEvents.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTTextDecorationLineType.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/Yoga.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/YGEnums.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/YGMacros.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTEventDispatcher.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridge.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridgeDelegate.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTJavaScriptLoader.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTFrameUpdate.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTInvalidating.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/UIView+React.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTComponent.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/node_modules/react-native/Libraries/Image/RCTImageLoader.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTResizeMode.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTURLRequestHandler.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTURLRequestDelegate.h \
+  /Users/theronpatrick/Desktop/theron_docs/personal/pontiac/pontiac/node_modules/react-native/Libraries/Image/RCTImageView.h
