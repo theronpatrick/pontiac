@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Button, AsyncStorage, ListView, Linking } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Button, AsyncStorage, ListView, Linking, Alert } from 'react-native';
 import Camera from "react-native-camera"
 import OpenFile from 'react-native-open-file';
 import Video from "react-native-video";
@@ -59,24 +59,32 @@ export default class App extends React.Component {
     });
   }
 
-  test = () => {
-    console.log("testing geolocation");
+  deleteData = () => {
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        let initialPosition = JSON.stringify(position);
-        console.log("pos " , initialPosition);
-      },
-      (error) => console.log(error.message),
-      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-    );
+    Alert.alert(
+      'Are you sure you want to delete all movie data?',
+      '',
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress: () => {
+          console.log('OK Pressed')
+          AsyncStorage.getAllKeys((err, keys) => {
+            AsyncStorage.multiRemove(keys, (err, stores) => {
+
+            });
+
+            this.populateMovieList()
+          });
+        }},
+      ],
+      { cancelable: false }
+    )
+
   }
 
   movieLinkPress = (e) => {
     console.log("Pressed " , e);
-    this.setState({
-      playVideoUri: e
-    })
+    alert(`Movie URI: ${e}`)
   }
 
   takePicture = () => {
@@ -98,36 +106,41 @@ export default class App extends React.Component {
         navigator.geolocation.getCurrentPosition(
           (p) => {
             position = p
+
+            console.log("position " , p);
+
+            // Right now, movies are indexed by the time (miliseconds from epoch) they were taken
+            // Prob want some kind of UID in the future
+
+            let store = "@movie_store"
+            let timestamp = Date.now()
+            let key = `${store}_${timestamp}`
+
+            let movieData = {
+              timestamp,
+              path: data.path,
+              location: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              }
+            }
+
+            console.log("data to save " , movieData);
+
+            // Save data
+            try {
+              AsyncStorage.setItem(key, JSON.stringify(movieData), () => {
+                this.populateMovieList()
+              });
+
+            } catch (error) {
+              // Error saving data
+              console.error("Error saving data " , error);
+            }
           },
           (error) => console.log('Error getting position' , error.message),
           {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
         );
-
-        // Right now, movies are indexed by the time (miliseconds from epoch) they were taken
-        // Prob want some kind of UID in the future
-
-        let store = "@movie_store"
-        let timestamp = Date.now()
-        let key = `${store}_${timestamp}`
-
-        let movieData = {
-          position,
-          timestamp,
-          path: data.path
-        }
-
-        console.log("data to save " , movieData);
-
-        // Save data
-        try {
-          AsyncStorage.setItem(key, JSON.stringify(movieData), () => {
-            this.populateMovieList()
-          });
-
-        } catch (error) {
-          // Error saving data
-          console.error("Error saving data " , error);
-        }
 
       })
       .catch(err => console.error(err));
@@ -205,11 +218,11 @@ export default class App extends React.Component {
 
     return (
         <View style={styles.container}>
-          <Text>React Native is Fun!</Text>
+          <Text>Record your Journey!</Text>
           {recordButton}
           {typeButton}
 
-          <Button onPress={this.test} title="Test"></Button>
+          <Button onPress={this.deleteData} title="Delete Data"></Button>
 
           <Camera
             ref={(cam) => {
@@ -226,11 +239,13 @@ export default class App extends React.Component {
           />
 
           <Text>Movie Time Stamps:</Text>
-            <ListView
-              styles={styles.movieLinksContainer}
-              dataSource={this.state.movieList}
-              renderRow={(rowData) => <Text onPress={() => {this.movieLinkPress(rowData.path)}} style={styles.movieLinks}>{rowData.timestamp}</Text>}
-          />
+
+          <ListView
+            enableEmptySections={true}
+            styles={styles.movieLinksContainer}
+            dataSource={this.state.movieList}
+            renderRow={(rowData) => <Text onPress={() => {this.movieLinkPress(rowData.path)}} style={styles.movieLinks}>Date: {new Date(parseInt(rowData.timestamp)).getMonth() + 1}/{new Date(parseInt(rowData.timestamp)).getDate()}. Location: {(Math.round(rowData.location.lat * 1000) / 1000).toString()}, {(Math.round(rowData.location.lng * 1000) / 1000).toString()}</Text>}
+        />
 
       </View>
     );
