@@ -1,10 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Button, AsyncStorage, ListView, Linking, Alert } from 'react-native';
+import { AppRegistry, StyleSheet, Text, View, ScrollView, Button, AsyncStorage, ListView, Linking, Alert } from 'react-native';
 import Camera from "react-native-camera"
 import OpenFile from 'react-native-open-file';
-import Video from "react-native-video";
+import { StackNavigator } from 'react-navigation';
 
-export default class App extends React.Component {
+export default class HomeScreen extends React.Component {
+
+  static navigationOptions = { title: 'Welcome', header: null };
 
   constructor(props) {
     super(props);
@@ -185,6 +187,8 @@ export default class App extends React.Component {
 
   render() {
 
+    const { navigate } = this.props.navigation;
+
     let recordButton;
     if (!this.state.isRecording) {
       recordButton = <Button
@@ -236,6 +240,11 @@ export default class App extends React.Component {
             captureMode={this.state.camera.captureMode}
             flashMode={this.state.camera.flashMode}
             mirrorImage={false}
+          />
+
+          <Button
+            onPress={() => {console.log('foo'); navigate('Movies')}}
+            title="View Movies"
           />
 
           <Text>Movie Time Stamps:</Text>
