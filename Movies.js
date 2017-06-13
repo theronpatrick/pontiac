@@ -5,7 +5,7 @@ import Video from "react-native-video";
 
 export default class Movies extends React.Component {
   static navigationOptions = {
-    title: 'View Journey So Far',
+    title: 'Your Journey So Far',
   };
 
   constructor(props) {
@@ -17,6 +17,8 @@ export default class Movies extends React.Component {
 
     AsyncStorage.getAllKeys((err, keys) => {
       console.log("keys " , keys);
+
+      // TODO: Order by taken date
       this.setState({
         keys: keys,
         movieIndex: 0
@@ -57,9 +59,9 @@ export default class Movies extends React.Component {
           movieIndex: 0
         })
       } else {
-        console.log("setting to " , this.state.movieIndex++);
+        console.log("setting to " , this.state.movieIndex + 1);
         this.setState({
-          movieIndex: this.state.movieIndex++
+          movieIndex: this.state.movieIndex + 1
         })
       }
     });

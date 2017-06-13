@@ -4,6 +4,9 @@ import Camera from "react-native-camera"
 import OpenFile from 'react-native-open-file';
 import { StackNavigator } from 'react-navigation';
 
+//var Mailer = require('NativeModules').RNMail;
+import { RNMail } from 'NativeModules'
+
 export default class HomeScreen extends React.Component {
 
   static navigationOptions = { title: 'Welcome', header: null };
@@ -81,6 +84,40 @@ export default class HomeScreen extends React.Component {
       ],
       { cancelable: false }
     )
+
+  }
+
+  backupData = () => {
+
+    console.log("mail " , RNMail);
+
+    AsyncStorage.getAllKeys((err, keys) => {
+      AsyncStorage.multiGet(keys, (err, stores) => {
+
+        let listData = []
+        stores.map((result, i, store) => {
+          let key = store[i][0];
+          let value = store[i][1];
+
+          listData.push( JSON.parse(value) )
+        });
+
+        console.log("list " , listData);
+
+        RNMail.mail({
+          subject: 'Journey App Backup',
+          recipients: ['therondevelopment@gmail.com'],
+          body: JSON.stringify(listData),
+          isHTML: true
+        }, (error, event) => {
+            if (error) {
+              console.error('Could not send mail. Please send a mail to therondevelopment@gmail.com');
+            }
+        });
+
+      });
+    });
+
 
   }
 
@@ -228,6 +265,8 @@ export default class HomeScreen extends React.Component {
 
           <Button onPress={this.deleteData} title="Delete Data"></Button>
 
+          <Button onPress={this.backupData} title="Backup Data"></Button>
+
           <Camera
             ref={(cam) => {
               this.camera = cam;
@@ -244,7 +283,7 @@ export default class HomeScreen extends React.Component {
 
           <Button
             onPress={() => {console.log('foo'); navigate('Movies')}}
-            title="View Movies"
+            title="Your Journey so Far"
           />
 
           <Text>Movie Time Stamps:</Text>
@@ -263,8 +302,9 @@ export default class HomeScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: '20%',
+    paddingTop: "10%",
+    height: "100%",
+    width: "100%",
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
