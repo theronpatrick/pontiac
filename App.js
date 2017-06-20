@@ -6,6 +6,20 @@ import { StackNavigator } from 'react-navigation';
 
 //var Mailer = require('NativeModules').RNMail;
 import { RNMail } from 'NativeModules'
+import firebase from "firebase"
+import RNFetchBlob from "react-native-fetch-blob"
+const Blob = RNFetchBlob.polyfill.Blob
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAvOfaegGuwsjZNzzhPrDOutRizggH0Hsw",
+    authDomain: "pontiac-970fe.firebaseapp.com",
+    databaseURL: "https://pontiac-970fe.firebaseio.com",
+    projectId: "pontiac-970fe",
+    storageBucket: "pontiac-970fe.appspot.com",
+    messagingSenderId: "952642331912"
+  };
+
+const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 export default class HomeScreen extends React.Component {
 
@@ -13,6 +27,18 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
+    let email = 'therondevelopment@gmail.com'
+    let password = 'default'
+
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+
+      console.log("error " , errorMessage);
+      // ...
+    });
 
     this.camera = null;
 
@@ -48,9 +74,14 @@ export default class HomeScreen extends React.Component {
         let listData = []
         stores.map((result, i, store) => {
           let key = store[i][0];
-          let value = store[i][1];
+          let value = JSON.parse(store[i][1]);
 
-          listData.push( JSON.parse(value) )
+          // Firebase and other libraries might add to our local storage keys, so only push value if it has
+          // the appropriate key
+          if (key.indexOf("movie_store") > -1) {
+            listData.push(value)
+          }
+
         });
 
         console.log("listdata... " , listData);
@@ -59,6 +90,7 @@ export default class HomeScreen extends React.Component {
            movieList: this.state.movieListSource.cloneWithRows(listData),
            movieLinks: listData
          })
+
 
       });
     });
@@ -85,6 +117,49 @@ export default class HomeScreen extends React.Component {
       { cancelable: false }
     )
 
+  }
+
+  // TODO: Upload all movies, AND metadata
+  uploadData = () => {
+    // Testing firebase
+    let testPath = this.state.movieLinks[2].path
+    console.log("first thingy " , testPath);
+
+    let storageRef = firebase.storage().ref('movies');
+
+     // let blob = RNFetchBlob.wrap(testPath)
+     window.Blob = Blob;
+     window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+
+     let rnfbURI = RNFetchBlob.wrap(testPath)
+     // create Blob from file path
+     Blob
+       .build(rnfbURI, { type : 'video/mov'})
+       .then((blob) => {
+         console.log("after creating " , blob);
+
+         // upload image using Firebase SDK
+         let refObject = storageRef
+         .child('test11.mov')
+         .put(blob)
+
+         var subscribe = refObject.on(firebase.storage.TaskEvent.STATE_CHANGED);
+         subscribe({
+           'next': (snapshot) => {
+             console.log("next " , snapshot);
+             // Wicked weird thing where bytesTransferred sometimes comes back as a (seemingly arbitrary?)
+             // string instead of the int of bytes it should be
+             if (typeof snapshot.bytesTransferred === "number") {
+               var percent = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+               console.log(percent + "% done")
+             }
+
+           },
+           'error': (snapshot) => {console.log("errored" , snapshot);},
+           'complete': (snapshot) => {console.log("completed" , snapshot);}
+         });
+
+       })
   }
 
   backupData = () => {
@@ -263,7 +338,7 @@ export default class HomeScreen extends React.Component {
           {recordButton}
           {typeButton}
 
-          <Button onPress={this.deleteData} title="Delete Data"></Button>
+          <Button onPress={this.uploadData} title="Upload Data"></Button>
 
           <Button onPress={this.backupData} title="Backup Data"></Button>
 
