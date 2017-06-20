@@ -18,9 +18,9 @@
 {
   NSURL *jsCodeLocation;
 
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
+  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
   
-  // jsCodeLocation = [NSURL URLWithString:@"http://735ca333.ngrok.io/index.ios.bundle?platform=ios&dev=true&minify=false"];
+   jsCodeLocation = [NSURL URLWithString:@"http://58d9e918.ngrok.io/index.ios.bundle?platform=ios&dev=true&minify=false"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"oakarina"
