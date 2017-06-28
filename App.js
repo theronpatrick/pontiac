@@ -4,22 +4,7 @@ import Camera from "react-native-camera"
 import OpenFile from 'react-native-open-file';
 import { StackNavigator } from 'react-navigation';
 
-//var Mailer = require('NativeModules').RNMail;
-import { RNMail } from 'NativeModules'
-import firebase from "firebase"
-import RNFetchBlob from "react-native-fetch-blob"
-const Blob = RNFetchBlob.polyfill.Blob
-
-const firebaseConfig = {
-    apiKey: "AIzaSyAvOfaegGuwsjZNzzhPrDOutRizggH0Hsw",
-    authDomain: "pontiac-970fe.firebaseapp.com",
-    databaseURL: "https://pontiac-970fe.firebaseio.com",
-    projectId: "pontiac-970fe",
-    storageBucket: "pontiac-970fe.appspot.com",
-    messagingSenderId: "952642331912"
-  };
-
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+import Uploader from "./helpers/Uploader.js"
 
 export default class HomeScreen extends React.Component {
 
@@ -27,18 +12,6 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
-
-    let email = 'therondevelopment@gmail.com'
-    let password = 'default'
-
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-
-      console.log("error " , errorMessage);
-      // ...
-    });
 
     this.camera = null;
 
@@ -71,8 +44,25 @@ export default class HomeScreen extends React.Component {
     AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (err, stores) => {
 
+        let compareFunction = function compare(a, b) {
+
+          let aObject = JSON.parse(a[1])
+          let bObject = JSON.parse(b[1])
+
+          if (aObject.timestamp < bObject.timestamp) {
+            return -1;
+          }
+          if (aObject.timestamp > bObject.timestamp) {
+            return 1;
+          }
+          // a must be equal to b
+          return 0;
+        }
+
+        let sortedMovies = stores.sort(compareFunction)
+
         let listData = []
-        stores.map((result, i, store) => {
+        sortedMovies.map((result, i, store) => {
           let key = store[i][0];
           let value = JSON.parse(store[i][1]);
 
@@ -120,46 +110,20 @@ export default class HomeScreen extends React.Component {
   }
 
   // TODO: Upload all movies, AND metadata
+  uploadCompleteCallback = (movie) => {
+    Uploader.uploadMovieMetadata(movie)
+  }
+
   uploadData = () => {
-    // Testing firebase
-    let testPath = this.state.movieLinks[2].path
-    console.log("first thingy " , testPath);
 
-    let storageRef = firebase.storage().ref('movies');
+    let movie = this.state.movieLinks[2]
 
-     // let blob = RNFetchBlob.wrap(testPath)
-     window.Blob = Blob;
-     window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+    Uploader.uploadMovie(movie, () => {
+      this.uploadCompleteCallback(movie)
+    })
 
-     let rnfbURI = RNFetchBlob.wrap(testPath)
-     // create Blob from file path
-     Blob
-       .build(rnfbURI, { type : 'video/mov'})
-       .then((blob) => {
-         console.log("after creating " , blob);
 
-         // upload image using Firebase SDK
-         let refObject = storageRef
-         .child('test11.mov')
-         .put(blob)
 
-         var subscribe = refObject.on(firebase.storage.TaskEvent.STATE_CHANGED);
-         subscribe({
-           'next': (snapshot) => {
-             console.log("next " , snapshot);
-             // Wicked weird thing where bytesTransferred sometimes comes back as a (seemingly arbitrary?)
-             // string instead of the int of bytes it should be
-             if (typeof snapshot.bytesTransferred === "number") {
-               var percent = snapshot.bytesTransferred / snapshot.totalBytes * 100;
-               console.log(percent + "% done")
-             }
-
-           },
-           'error': (snapshot) => {console.log("errored" , snapshot);},
-           'complete': (snapshot) => {console.log("completed" , snapshot);}
-         });
-
-       })
   }
 
   backupData = () => {

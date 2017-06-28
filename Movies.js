@@ -15,6 +15,7 @@ export default class Movies extends React.Component {
       movieUrl: null
     }
 
+    // TODO: Save movie list from App.js and just reference from there
     AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (err, stores) => {
 
