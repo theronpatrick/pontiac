@@ -1,4 +1,3 @@
-import { RNMail } from 'NativeModules'
 import firebase from "firebase"
 import RNFetchBlob from "react-native-fetch-blob"
 const Blob = RNFetchBlob.polyfill.Blob
@@ -31,16 +30,17 @@ firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error
   console.log("error " , errorMessage);
 });
 
+window.Blob = Blob;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+
+// TODO: Need to handle memory here better, getting crashes after uploading a lot of movies
 const uploadMovie = function(movie, callback) {
 
   let storageRef = firebase.storage().ref();
 
-   window.Blob = Blob;
-   window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
-
    let rnfbURI = RNFetchBlob.wrap(movie.path)
    // create Blob from file path
-   Blob
+   let blobBuilder = Blob
      .build(rnfbURI, { type : 'video/mov'})
      .then((blob) => {
        console.log("after creating " , blob);
@@ -51,14 +51,14 @@ const uploadMovie = function(movie, callback) {
        .child(movie.timestamp.toString() + ".mov")
        .put(blob)
 
-       var subscribe = refObject.on(firebase.storage.TaskEvent.STATE_CHANGED);
+       let subscribe = refObject.on(firebase.storage.TaskEvent.STATE_CHANGED);
        subscribe({
          'next': (snapshot) => {
            console.log("next " , snapshot);
            // Wicked weird thing where bytesTransferred sometimes comes back as a (seemingly arbitrary?)
            // string instead of the int of bytes it should be
            if (typeof snapshot.bytesTransferred === "number") {
-             var percent = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+             let percent = snapshot.bytesTransferred / snapshot.totalBytes * 100;
              console.log(percent + "% done")
            }
 
@@ -66,6 +66,15 @@ const uploadMovie = function(movie, callback) {
          'error': (snapshot) => {console.log("errored" , snapshot);},
          'complete': (snapshot) => {
            console.log("completed" , snapshot);
+
+           // Try clearing out some memory
+           // Note: Doesn't seem to be doing shit rn
+           storageRef = null;
+           rnfbURI = null;
+           blobBuilder = null;
+           subscribe = null;
+           refObject = null;
+
            callback()
          }
        });

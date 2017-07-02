@@ -3,6 +3,7 @@ import { AppRegistry, StyleSheet, Text, View, ScrollView, Button, AsyncStorage, 
 import Camera from "react-native-camera"
 import OpenFile from 'react-native-open-file';
 import { StackNavigator } from 'react-navigation';
+import { RNMail } from 'NativeModules'
 
 import Uploader from "./helpers/Uploader.js"
 
@@ -32,6 +33,7 @@ export default class HomeScreen extends React.Component {
       movieListSource: movieListSource,
       movieList: movieListSource.cloneWithRows([]),
       movieLinks: [],
+      uploadIndex: 0,
       playVideoUri: ""
     };
 
@@ -112,17 +114,35 @@ export default class HomeScreen extends React.Component {
   // TODO: Upload all movies, AND metadata
   uploadCompleteCallback = (movie) => {
     Uploader.uploadMovieMetadata(movie)
+
+    let index = this.state.uploadIndex;
+    let nextIndex = index + 1
+    this.setState({
+      uploadIndex: nextIndex
+    })
+
+    if (nextIndex != this.state.movieLinks.length) {
+      console.log("upload movie num " , nextIndex);
+      this.uploadData(this.state.movieLinks[nextIndex])
+    }
+
   }
 
-  uploadData = () => {
-
-    let movie = this.state.movieLinks[2]
+  uploadData = (movie) => {
 
     Uploader.uploadMovie(movie, () => {
       this.uploadCompleteCallback(movie)
     })
+  }
 
-
+  uploadDataHandler = () => {
+    // TODO: Reset to 0, only using this cuz having issues with packager
+    // TODO: Finish uploading videos I have
+    this.setState({
+      uploadIndex: 50
+    }, () => {
+      this.uploadData(this.state.movieLinks[0])
+    })
 
   }
 
@@ -302,7 +322,7 @@ export default class HomeScreen extends React.Component {
           {recordButton}
           {typeButton}
 
-          <Button onPress={this.uploadData} title="Upload Data"></Button>
+          <Button onPress={this.uploadDataHandler} title="Upload Data"></Button>
 
           <Button onPress={this.backupData} title="Backup Data"></Button>
 
