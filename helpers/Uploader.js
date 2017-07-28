@@ -84,6 +84,10 @@ const uploadMovie = function(movie, callback) {
 
 const uploadMovieMetadata = function(movie) {
 
+  console.log("Uploading movie " , movie);
+
+  // wat
+
   // TODO: Assign a GUID to movies
   let timestamp = movie.timestamp.toString()
 

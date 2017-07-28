@@ -9,7 +9,7 @@ import Uploader from "./helpers/Uploader.js"
 
 export default class HomeScreen extends React.Component {
 
-  static navigationOptions = { title: 'Welcome', header: null };
+  static navigationOptions = { title: 'Home', header: null };
 
   constructor(props) {
     super(props);
@@ -119,27 +119,35 @@ export default class HomeScreen extends React.Component {
     let nextIndex = index + 1
     this.setState({
       uploadIndex: nextIndex
+    }, () => {
+      if (nextIndex != this.state.movieLinks.length) {
+        console.log("upload movie num " , nextIndex);
+        this.uploadData(this.state.movieLinks[nextIndex])
+      }
     })
-
-    if (nextIndex != this.state.movieLinks.length) {
-      console.log("upload movie num " , nextIndex);
-      this.uploadData(this.state.movieLinks[nextIndex])
-    }
 
   }
 
   uploadData = (movie) => {
 
+    console.log("upload movie data for " , movie);
+
+
+    this.uploadCompleteCallback(movie)
+
+    // TODO: Right now just uploading metadata, figure out wtf to do with videos
+    /*
     Uploader.uploadMovie(movie, () => {
       this.uploadCompleteCallback(movie)
     })
+    */
   }
 
   uploadDataHandler = () => {
     // TODO: Reset to 0, only using this cuz having issues with packager
     // TODO: Finish uploading videos I have
     this.setState({
-      uploadIndex: 50
+      uploadIndex: 0
     }, () => {
       this.uploadData(this.state.movieLinks[0])
     })
@@ -319,12 +327,26 @@ export default class HomeScreen extends React.Component {
     return (
         <View style={styles.container}>
           <Text>Record your Journey!</Text>
+
           {recordButton}
           {typeButton}
 
-          <Button onPress={this.uploadDataHandler} title="Upload Data"></Button>
+          <View style={styles.buttonWrapper}>
+            <Button onPress={this.uploadDataHandler} title="Upload Data" ></Button>
 
-          <Button onPress={this.backupData} title="Backup Data"></Button>
+            <Button onPress={this.backupData} title="Backup Data" ></Button>
+
+            <Button onPress={this.goToMap}
+              title="Go To Map"
+              onPress={() => {navigate('Map')}}
+            />
+
+            <Button
+              onPress={() => {navigate('Movies')}}
+              title="Your Journey so Far"
+            />
+
+          </View>
 
           <Camera
             ref={(cam) => {
@@ -338,11 +360,6 @@ export default class HomeScreen extends React.Component {
             captureMode={this.state.camera.captureMode}
             flashMode={this.state.camera.flashMode}
             mirrorImage={false}
-          />
-
-          <Button
-            onPress={() => {console.log('foo'); navigate('Movies')}}
-            title="Your Journey so Far"
           />
 
           <Text>Movie Time Stamps:</Text>
@@ -367,6 +384,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttonWrapper: {
+      flexWrap: 'wrap',
+      alignItems: 'flex-start',
+      flexDirection:'row',
   },
   preview: {
     alignItems: 'center',
